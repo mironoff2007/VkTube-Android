@@ -6,7 +6,7 @@ import com.mobiledeveloper.vktube.data.cache.InMemoryCache
 import com.mobiledeveloper.vktube.data.comments.CommentsRepository
 import com.mobiledeveloper.vktube.data.like.LikeRepository
 import com.mobiledeveloper.vktube.data.user.UserRepository
-import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
+import com.mobiledeveloper.vktube.data.video.VideoData
 import com.mobiledeveloper.vktube.ui.screens.comments.CommentCellModel
 import com.mobiledeveloper.vktube.ui.screens.comments.mapToCommentCellModel
 import com.mobiledeveloper.vktube.ui.screens.video.models.VideoAction
@@ -56,7 +56,7 @@ class VideoViewModel @Inject constructor(
 
     private fun performLike() {
         viewModelScope.launch {
-            val video: VideoCellModel = viewState.video ?: return@launch
+            val video: VideoData = viewState.video ?: return@launch
 
             if (video.likesByMe) {
                 viewState = viewState.copy(

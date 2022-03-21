@@ -1,10 +1,9 @@
 package com.mobiledeveloper.vktube.ui.screens.feed.models
 
 import com.mobiledeveloper.vktube.data.user.StoredUser
-import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
-import com.vk.sdk.api.video.dto.VideoVideoFull
+import com.mobiledeveloper.vktube.data.video.VideoData
 
 data class FeedState(
-    val items: List<VideoCellModel> = emptyList(),
+    val items: List<VideoData> = emptyList(),
     val currentUser: StoredUser? = null
 )

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.mobiledeveloper.vktube.R
-import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
+import com.mobiledeveloper.vktube.data.video.VideoData
 import com.mobiledeveloper.vktube.ui.common.views.VideoActionView
 import com.mobiledeveloper.vktube.ui.screens.comments.CommentCellModel
 import com.mobiledeveloper.vktube.ui.screens.comments.CommentsScreen
@@ -194,7 +194,7 @@ fun VideoScreenView(
 
 @Composable
 private fun VideoActionsRow(
-    video: VideoCellModel,
+    video: VideoData,
     onLikeClick: () -> Unit
 ) {
     Row(
@@ -216,7 +216,7 @@ private fun VideoActionsRow(
 }
 
 @Composable
-private fun VideoUserRow(video: VideoCellModel) {
+private fun VideoUserRow(video: VideoData) {
 
     val context = LocalContext.current
 
@@ -337,7 +337,7 @@ private fun VideoCommentsView(
 
 @Composable
 private fun VideoPlayerView(
-    video: VideoCellModel,
+    video: VideoData,
     onVideoLoading: () -> Unit,
     isLoadingVideo: Boolean?
 ) {

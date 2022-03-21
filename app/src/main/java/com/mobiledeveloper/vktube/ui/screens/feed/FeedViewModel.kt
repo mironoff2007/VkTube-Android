@@ -5,7 +5,7 @@ import com.mobiledeveloper.vktube.base.BaseViewModel
 import com.mobiledeveloper.vktube.data.cache.InMemoryCache
 import com.mobiledeveloper.vktube.data.clubs.ClubsRepository
 import com.mobiledeveloper.vktube.data.user.UserRepository
-import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
+import com.mobiledeveloper.vktube.data.video.VideoData
 import com.mobiledeveloper.vktube.ui.common.cell.mapToVideoCellModel
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedAction
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedEvent
@@ -25,14 +25,14 @@ class FeedViewModel @Inject constructor(
         when (viewEvent) {
             FeedEvent.ScreenShown -> fetchVideos()
             FeedEvent.ClearAction -> clearAction()
-            is FeedEvent.VideoClicked -> obtainVideoClick(viewEvent.videoCellModel)
+            is FeedEvent.VideoClicked -> obtainVideoClick(viewEvent.videoData)
         }
     }
 
-    private fun obtainVideoClick(videoCellModel: VideoCellModel) {
+    private fun obtainVideoClick(videoData: VideoData) {
         viewModelScope.launch {
-            InMemoryCache.clickedVideos.add(videoCellModel)
-            viewAction = FeedAction.OpenVideoDetail(videoCellModel.videoId)
+            InMemoryCache.clickedVideos.add(videoData)
+            viewAction = FeedAction.OpenVideoDetail(videoData.videoId)
         }
     }
 
