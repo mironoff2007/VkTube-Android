@@ -7,6 +7,7 @@ import com.mobiledeveloper.vktube.data.comments.CommentsRepository
 import com.mobiledeveloper.vktube.data.like.LikeRepository
 import com.mobiledeveloper.vktube.data.user.UserRepository
 import com.mobiledeveloper.vktube.data.video.VideoData
+import com.mobiledeveloper.vktube.data.video.VideosRepository
 import com.mobiledeveloper.vktube.ui.screens.comments.CommentCellModel
 import com.mobiledeveloper.vktube.ui.screens.comments.mapToCommentCellModel
 import com.mobiledeveloper.vktube.ui.screens.video.models.VideoAction
@@ -22,6 +23,7 @@ class VideoViewModel @Inject constructor(
     private val commentsRepository: CommentsRepository,
     private val userRepository: UserRepository,
     private val likeRepository: LikeRepository,
+    val videoRepository: VideosRepository
 ) : BaseViewModel<VideoViewState, VideoAction, VideoEvent>(
     VideoViewState()
 ) {
