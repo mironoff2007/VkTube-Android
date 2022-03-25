@@ -15,7 +15,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class LikeRepository @Inject constructor() {
 
-    suspend fun unlike(videoId: Long, ownerId: Long) {
+    suspend fun unlike(videoId: Int, ownerId: Long) {
         return suspendCoroutine { continuation ->
             VK.execute(
                 LikesService().likesDelete(
@@ -34,7 +34,7 @@ class LikeRepository @Inject constructor() {
             )
         }
     }
-    suspend fun like(videoId: Long, ownerId: Long) {
+    suspend fun like(videoId: Int, ownerId: Long) {
         return suspendCoroutine { continuation ->
             VK.execute(
                 LikesService().likesAdd(

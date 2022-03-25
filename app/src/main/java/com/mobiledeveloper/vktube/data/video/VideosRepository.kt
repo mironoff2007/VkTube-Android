@@ -1,6 +1,5 @@
 package com.mobiledeveloper.vktube.data.video
 
-import android.util.Log
 import com.mobiledeveloper.vktube.ui.screens.video.VideoDB
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKApiCallback
@@ -37,10 +36,10 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
 
       val videoItems = mutableListOf<VideoDB>()
       listResponse.forEach { response ->
-         var i=-1
-         videoItems.addAll(response.items.map { videoFull ->
+         var i=count*(frame+1)
+         videoItems.addAll(response.items.sortedBy { it.addingDate }.map { videoFull ->
             val group = clubs.items.firstOrNull { it.id.abs() == videoFull.ownerId?.abs() }
-            i++
+            i--
             VideoDB(
                videoId = videoFull.id ?: 0,
                userName = group?.name.orEmpty(),
@@ -48,18 +47,20 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
                subscribers = group?.membersCount ?: 0,
                frame = frame,
                position = i,
-               addingDate = videoFull.addingDate,
-               name = videoFull.title ?: ""
+               addingDate = videoFull.addingDate ?:0,
+               title = videoFull.title ?: "",
+               viewsCount = videoFull.views ?: 0,
+               likes = videoFull.likes?.count ?: 0,
+               likesByMe = videoFull.likes?.userLikes?.value == 1,
+               videoUrl = videoFull.player.orEmpty(),
+               previewUrl = videoFull.image?.reversed()?.firstOrNull()?.url ?: "",
+               ownerId = videoFull.ownerId?.value ?: 0
             )
          })
       }
 
       videoItems.sortBy { it.addingDate }
-      val rev = videoItems.reversed()
-      var i=0
-      rev.forEach { if(it.position==count) Log.d("Test_tag", "ind=$i")
-         i++}
-      return rev
+      return videoItems.reversed()
    }
 
    private suspend fun fetchVideo(videoGetRequest: VKRequest<VideoGetResponse>): VideoGetResponse {

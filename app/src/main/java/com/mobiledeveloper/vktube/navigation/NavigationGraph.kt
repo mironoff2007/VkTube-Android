@@ -37,7 +37,7 @@ fun NavigationGraph() {
             "${NavigationTree.Root.Detail.name}/{videoId}",
             arguments = listOf(navArgument("videoId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val param = backStackEntry.arguments?.getString("videoId")?.toLong()
+            val param = backStackEntry.arguments?.getString("videoId")?.toInt()
             val videoViewModel = hiltViewModel<VideoViewModel>()
             VideoScreen(param, videoViewModel)
         }

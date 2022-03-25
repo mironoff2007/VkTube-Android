@@ -25,7 +25,7 @@ import com.valentinilk.shimmer.shimmer
 import com.vk.sdk.api.video.dto.VideoVideoFull
 
 data class VideoCellModel(
-    val videoId: Long, val subscribers: Int,
+    val videoId: Int, val subscribers: Int,
     val title: String, val previewUrl: String, val userImage: String, val userName: String,
     val viewsCount: Int, val dateAdded: Int,
     val likes: Int, val likesByMe: Boolean, val videoUrl: String, val ownerId: Long
@@ -39,7 +39,7 @@ fun VideoVideoFull.mapToVideoCellModel(userImage: String, userName: String, subs
 
 
     return VideoCellModel(
-        videoId = videoId.toLong(),
+        videoId = videoId,
         title = title.orEmpty(),
         previewUrl = maxQualityImage?.url.orEmpty(),
         userImage = userImage,

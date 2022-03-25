@@ -7,7 +7,6 @@ import com.mobiledeveloper.vktube.data.clubs.ClubsRepository
 import com.mobiledeveloper.vktube.data.user.UserRepository
 import com.mobiledeveloper.vktube.data.video.VideosRepository
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
-import com.mobiledeveloper.vktube.ui.common.cell.mapToVideoCellModel
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedAction
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedEvent
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedState
@@ -54,13 +53,30 @@ class FeedViewModel @Inject constructor(
             }
 
             val clubs = clubsRepository.fetchClubs(userId)
-            val videos = clubsRepository.fetchVideos(clubs = clubs, count = 20)
+            //val videos = clubsRepository.fetchVideos(clubs = clubs, count = 20)
+
+            val videos1 = videosRepository.fetchVideos(clubs = clubs, count = 4, frame = 0)
+            InMemoryCache.loadedVideos.addAll(videos1)
+
+            val videos2 = videosRepository.fetchVideos(clubs = clubs, count = 4, frame = 1)
+            InMemoryCache.loadedVideos.addAll(videos2)
+
+            val videos =  InMemoryCache.loadedVideos.sortedBy { it.addingDate }.reversed()
             viewState = viewState.copy(
                 items = videos.mapNotNull { model ->
-                    model.item.mapToVideoCellModel(
+                    VideoCellModel(
+                        videoId = model.videoId,
                         userImage = model.userImage,
                         userName = model.userName,
-                        subscribers = model.subscribers
+                        subscribers = model.subscribers,
+                        title = model.title,
+                        viewsCount = model.viewsCount,
+                        dateAdded = model.addingDate,
+                        likes = model.likes,
+                        likesByMe = model.likesByMe,
+                        videoUrl = model.videoUrl,
+                        previewUrl = model.previewUrl,
+                        ownerId = model.ownerId
                     )
                 }
             )

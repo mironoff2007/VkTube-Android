@@ -9,10 +9,16 @@ data class VideoDB(
     val userImage: String,
     val userName: String,
     val subscribers: Int,
-    val addingDate: Int? = null,
+    val addingDate: Int,
     val frame: Int? = null,
     val position: Int? = null,
-    val name:String
+    val title:String,
+    val previewUrl: String,
+    val viewsCount: Int,
+    val likes: Int,
+    val likesByMe: Boolean,
+    val videoUrl: String,
+    val ownerId: Long
 )
 {
     @PrimaryKey(autoGenerate = true)

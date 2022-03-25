@@ -26,7 +26,7 @@ class VideoViewModel @Inject constructor(
     VideoViewState()
 ) {
 
-    private var videoId: Long? = null
+    private var videoId: Int? = null
 
     override fun obtainEvent(viewEvent: VideoEvent) {
         when (viewEvent) {
@@ -80,7 +80,7 @@ class VideoViewModel @Inject constructor(
         }
     }
 
-    private fun performVideoLaunch(videoId: Long?) {
+    private fun performVideoLaunch(videoId: Int?) {
         this.videoId = videoId
         if (InMemoryCache.clickedVideos.isEmpty()) throw IllegalStateException("Can't show video without cache")
 

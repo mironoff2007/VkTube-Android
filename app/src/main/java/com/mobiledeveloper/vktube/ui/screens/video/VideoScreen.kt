@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun VideoScreen(
-    videoId: Long?,
+    videoId: Int?,
     videoViewModel: VideoViewModel
 ) {
     val viewState by videoViewModel.viewStates().collectAsState()

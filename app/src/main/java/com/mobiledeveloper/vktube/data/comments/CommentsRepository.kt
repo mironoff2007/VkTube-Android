@@ -14,11 +14,11 @@ import kotlin.coroutines.suspendCoroutine
 
 class CommentsRepository @Inject constructor() {
 
-    suspend fun fetchCommentsForVideo(ownerId: Long, videoId: Long, count: Int): VideoGetCommentsResponse {
+    suspend fun fetchCommentsForVideo(ownerId: Long, videoId: Int, count: Int): VideoGetCommentsResponse {
         return suspendCoroutine { continuation ->
             VK.execute(
                 VideoService().videoGetComments(
-                    videoId = videoId.toInt(),
+                    videoId = videoId,
                     count = count,
                     ownerId = UserId(ownerId).abs().unaryMinus()
                 ),
@@ -34,11 +34,11 @@ class CommentsRepository @Inject constructor() {
         }
     }
 
-    suspend fun addCommentForVideo(ownerId: Long, videoId: Long, comment: String) {
+    suspend fun addCommentForVideo(ownerId: Long, videoId: Int, comment: String) {
         return suspendCoroutine {
             VK.execute(
                 VideoService().videoCreateComment(
-                    videoId = videoId.toInt(),
+                    videoId = videoId,
                     ownerId = UserId(ownerId).abs().unaryMinus(),
                     message = comment
                 ),
