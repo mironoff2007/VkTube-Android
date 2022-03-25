@@ -39,7 +39,7 @@ class ClubsRepository @Inject constructor() {
 
     suspend fun fetchVideos(clubs: GroupsGetObjectExtendedResponse, count: Int): List<VideoDataModel> {
         val requests = clubs.items.map {
-            VideoService().videoGet(count = count, ownerId = -it.id)
+            VideoService().videoGet(count = 4, ownerId = -it.id, offset = 0)
         }
 
         val listResponse = mutableListOf<VideoGetResponse>()

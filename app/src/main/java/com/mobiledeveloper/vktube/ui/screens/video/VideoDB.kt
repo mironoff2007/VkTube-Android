@@ -11,7 +11,8 @@ data class VideoDB(
     val subscribers: Int,
     val addingDate: Int? = null,
     val frame: Int? = null,
-    val position: Int? = null
+    val position: Int? = null,
+    val name:String
 )
 {
     @PrimaryKey(autoGenerate = true)

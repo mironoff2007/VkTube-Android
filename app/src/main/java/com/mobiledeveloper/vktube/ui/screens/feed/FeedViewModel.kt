@@ -5,6 +5,7 @@ import com.mobiledeveloper.vktube.base.BaseViewModel
 import com.mobiledeveloper.vktube.data.cache.InMemoryCache
 import com.mobiledeveloper.vktube.data.clubs.ClubsRepository
 import com.mobiledeveloper.vktube.data.user.UserRepository
+import com.mobiledeveloper.vktube.data.video.VideosRepository
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
 import com.mobiledeveloper.vktube.ui.common.cell.mapToVideoCellModel
 import com.mobiledeveloper.vktube.ui.screens.feed.models.FeedAction
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val clubsRepository: ClubsRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val videosRepository: VideosRepository
 ) : BaseViewModel<FeedState, FeedAction, FeedEvent>(initialState = FeedState()) {
     override fun obtainEvent(viewEvent: FeedEvent) {
         when (viewEvent) {
