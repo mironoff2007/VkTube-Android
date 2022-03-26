@@ -41,15 +41,12 @@ class VideoRepositoryTest {
             val clubs = clubsRepository.fetchClubs(userId)
 
             val videos1 = videoRepository.fetchVideos(clubs = clubs, count = 4, frame = 0)
-            Log.d("Test_tag",getFrameEndId(InMemoryCache.loadedVideos,4, 0).toString())
             InMemoryCache.loadedVideos.addAll(videos1)
 
             val videos2 = videoRepository.fetchVideos(clubs = clubs, count = 4, frame = 1)
             InMemoryCache.loadedVideos.addAll(videos2)
 
             InMemoryCache.loadedVideos.sortedBy { it.addingDate }.reversed()
-
-            Log.d("Test_tag",getFrameEndId(InMemoryCache.loadedVideos,4, 1).toString())
 
             size = InMemoryCache.loadedVideos.size
         }

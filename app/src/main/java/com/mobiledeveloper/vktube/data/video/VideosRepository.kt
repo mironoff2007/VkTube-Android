@@ -30,7 +30,6 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
       InMemoryCache.loadedVideos.addAll(fetchVideos(clubs, count, frame))
       InMemoryCache.loadedVideos.sortWith(Comparator { video1, video2 -> video2.addingDate - video1.addingDate })
       val id = getFrameEndId(InMemoryCache.loadedVideos,count, frame )
-      Log.e("Test_tag", "frame ends at $id")
       return if(id==0) emptyList<VideoDB>() else InMemoryCache.loadedVideos.subList(0,id+1)
    }
 
