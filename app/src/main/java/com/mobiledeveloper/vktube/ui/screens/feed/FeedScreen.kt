@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,13 +57,13 @@ fun FeedScreen(
 
 @Composable
 private fun FeedView(viewState: FeedState, onVideoClick: (VideoCellModel) -> Unit, onScrollEnd: () -> Unit) {
-    LazyColumn {
 
-        itemsIndexed(viewState.items) { i, item  ->
-            if (viewState.items.size-1 == i) {
-                Log.e("Test_tag", "end of list reached $i")
-                onScrollEnd.invoke()
-            }
+    val lazyListState: LazyListState = rememberLazyListState()
+
+    LazyColumn (state = lazyListState) {
+
+        if (lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1) {
+            onScrollEnd.invoke()
         }
 
         if (viewState.items.isEmpty()) {

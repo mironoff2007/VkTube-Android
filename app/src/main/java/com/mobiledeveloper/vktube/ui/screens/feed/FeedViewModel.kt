@@ -23,10 +23,16 @@ class FeedViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val videosRepository: VideosRepository
 ) : BaseViewModel<FeedState, FeedAction, FeedEvent>(initialState = FeedState()) {
+
+    private var lockLoad = false
+
     override fun obtainEvent(viewEvent: FeedEvent) {
+        Log.d("Test_tag", viewEvent.javaClass.simpleName)
         when (viewEvent) {
+            FeedEvent.Loading -> { lockLoad = true }
+            FeedEvent.Loaded -> { lockLoad = false }
             FeedEvent.ScreenShown -> fetchVideos()
-            FeedEvent.ScrollEnd -> fetchVideos()
+            FeedEvent.ScrollEnd -> if (!lockLoad) fetchVideos()
             FeedEvent.ClearAction -> clearAction()
             is FeedEvent.VideoClicked -> obtainVideoClick(viewEvent.videoCellModel)
         }
@@ -49,6 +55,7 @@ class FeedViewModel @Inject constructor(
 
     private fun fetchVideos() {
         viewModelScope.launch(Dispatchers.IO) {
+            obtainEvent(FeedEvent.Loading)
             val userId = try {
                 userRepository.fetchLocalUser().userId
             } catch (e: Exception) {
@@ -56,17 +63,12 @@ class FeedViewModel @Inject constructor(
                 userRepository.fetchLocalUser().userId
             }
 
-            Log.e("Test_tag", "Loading videos")
-
             val clubs = clubsRepository.fetchClubs(userId)
-            //val videos = clubsRepository.fetchVideos(clubs = clubs, count = 20)
 
             frame++
             val videos =  videosRepository.getFrame(frame = frame, count = 2, clubs = clubs)
 
-            Log.e("Test_tag", "videos size ${videos.size}")
-
-            viewState = viewState.copy(
+             viewState = viewState.copy(
                 items = videos.mapNotNull { model ->
                     VideoCellModel(
                         videoId = model.videoId,
@@ -84,6 +86,7 @@ class FeedViewModel @Inject constructor(
                     )
                 }
             )
+            obtainEvent(FeedEvent.Loaded)
         }
     }
 }
