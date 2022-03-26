@@ -18,6 +18,10 @@ import kotlin.coroutines.suspendCoroutine
 
 class VideosRepository @Inject constructor(private val videosDao : VideosDatabase) {
 
+   companion object{
+      const val GROUP_ID_KEY="group_id"
+   }
+
    fun saveToDB(videos: List<VideoDB>){
       videosDao.videosDao().insertAllVideoData(videos)
    }
@@ -27,18 +31,21 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
       InMemoryCache.loadedVideos.sortWith(Comparator { video1, video2 -> video2.addingDate - video1.addingDate })
       val id = getFrameEndId(InMemoryCache.loadedVideos,count, frame )
       Log.e("Test_tag", "frame ends at $id")
-      return InMemoryCache.loadedVideos.subList(0,id+1)
+      return if(id==0) emptyList<VideoDB>() else InMemoryCache.loadedVideos.subList(0,id+1)
    }
 
    suspend fun fetchVideos(clubs: GroupsGetObjectExtendedResponse, count: Int, frame:Int): List<VideoDB> {
-      val requests = clubs.items.map {
-         VideoService().videoGet(count = count, ownerId = -it.id, offset = frame*count)
-      }
+       val requests = clubs.items
+          .filter { !InMemoryCache.groupsIgnoreListIds.contains(it.id.value.toInt()) }
+          .map { VideoService().videoGet(count = count, ownerId = -it.id, offset = frame * count)
+               .addParam(GROUP_ID_KEY, it.id.value.toInt())
+          }
 
       val listResponse = mutableListOf<VideoGetResponse>()
       requests.forEach {
          try {
-            listResponse.add(fetchVideo(it))
+            val groupId = it.params[GROUP_ID_KEY]?.toIntOrNull() ?: 0
+            listResponse.add(fetchVideo(it, groupId) )
          } catch (e: java.lang.Exception) {
             println(e.localizedMessage)
          }
@@ -46,38 +53,39 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
 
       val videoItems = mutableListOf<VideoDB>()
       listResponse.forEach { response ->
-         var i=count*(frame+1)
-         videoItems.addAll(response.items.sortedBy { it.addingDate }.map { videoFull ->
-            val group = clubs.items.firstOrNull { it.id.abs() == videoFull.ownerId?.abs() }
-            i--
-            VideoDB(
-               videoId = videoFull.id ?: 0,
-               userName = group?.name.orEmpty(),
-               userImage = group?.photo100.orEmpty(),
-               subscribers = group?.membersCount ?: 0,
-               frame = frame,
-               position = i,
-               addingDate = videoFull.addingDate ?:0,
-               title = videoFull.title ?: "",
-               viewsCount = videoFull.views ?: 0,
-               likes = videoFull.likes?.count ?: 0,
-               likesByMe = videoFull.likes?.userLikes?.value == 1,
-               videoUrl = videoFull.player.orEmpty(),
-               previewUrl = videoFull.image?.reversed()?.firstOrNull()?.url ?: "",
-               ownerId = videoFull.ownerId?.value ?: 0
-            )
-         })
-      }
-
+            var i = count * (frame + 1)
+            videoItems.addAll(response.items.sortedBy { it.addingDate }.map { videoFull ->
+               val group = clubs.items.firstOrNull { it.id.abs() == videoFull.ownerId?.abs() }
+               i--
+               VideoDB(
+                  videoId = videoFull.id ?: 0,
+                  userName = group?.name.orEmpty(),
+                  userImage = group?.photo100.orEmpty(),
+                  subscribers = group?.membersCount ?: 0,
+                  frame = frame,
+                  position = i,
+                  addingDate = videoFull.addingDate ?: 0,
+                  title = videoFull.title ?: "",
+                  viewsCount = videoFull.views ?: 0,
+                  likes = videoFull.likes?.count ?: 0,
+                  likesByMe = videoFull.likes?.userLikes?.value == 1,
+                  videoUrl = videoFull.player.orEmpty(),
+                  previewUrl = videoFull.image?.reversed()?.firstOrNull()?.url ?: "",
+                  ownerId = videoFull.ownerId?.value ?: 0
+               )
+            })
+         }
       videoItems.sortBy { it.addingDate }
       return videoItems.reversed()
    }
 
-   private suspend fun fetchVideo(videoGetRequest: VKRequest<VideoGetResponse>): VideoGetResponse {
+   private suspend fun fetchVideo(videoGetRequest: VKRequest<VideoGetResponse>, groupId: Int): VideoGetResponse {
       return suspendCoroutine { continuation ->
          VK.execute(request = videoGetRequest,
             object : VKApiCallback<VideoGetResponse> {
                override fun fail(error: Exception) {
+                  println( "$error - $groupId, add to ignore")
+                  InMemoryCache.groupsIgnoreListIds.add(groupId)
                   continuation.resumeWithException(error)
                }
 
@@ -88,7 +96,7 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
       }
    }
 
-   fun getFrameEndId(list:List<VideoDB>, count:Int, frame:Int): Int{
+   private fun getFrameEndId(list:List<VideoDB>, count:Int, frame:Int): Int{
       var i = 0
       list.forEach {
          if (it.position == count*(frame+1) - 1) {

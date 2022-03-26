@@ -9,4 +9,5 @@ object InMemoryCache {
     val loadedVideos: MutableList<VideoDB> = mutableListOf()
     val clickedVideos: MutableList<VideoCellModel> = mutableListOf()
     val comments: MutableMap<Int, List<CommentCellModel>> = mutableMapOf()
+    val groupsIgnoreListIds: MutableList<Int> = mutableListOf()
 }

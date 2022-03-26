@@ -37,36 +37,6 @@ fun VideoVideoFull.mapToVideoDataModel(
 
 class ClubsRepository @Inject constructor() {
 
-    suspend fun fetchVideos(clubs: GroupsGetObjectExtendedResponse, count: Int): List<VideoDataModel> {
-        val requests = clubs.items.map {
-            VideoService().videoGet(count = 4, ownerId = -it.id, offset = 0)
-        }
-
-        val listResponse = mutableListOf<VideoGetResponse>()
-        requests.forEach {
-            try {
-                listResponse.add(fetchVideo(it))
-            } catch (e: java.lang.Exception) {
-                println(e.localizedMessage)
-            }
-        }
-
-        val videoItems = mutableListOf<VideoDataModel>()
-        listResponse.forEach { response ->
-            videoItems.addAll(response.items.map { videoFull ->
-                val group = clubs.items.firstOrNull { it.id.abs() == videoFull.ownerId?.abs() }
-                videoFull.mapToVideoDataModel(
-                    userName = group?.name.orEmpty(),
-                    userImage = group?.photo100.orEmpty(),
-                    subscribers = group?.membersCount ?: 0
-                )
-            })
-        }
-
-        videoItems.sortBy { it.item.addingDate }
-        return videoItems.reversed()
-    }
-
     suspend fun fetchClubs(userId: Long): GroupsGetObjectExtendedResponse {
         return suspendCoroutine { continuation ->
             VK.execute(
@@ -77,21 +47,6 @@ class ClubsRepository @Inject constructor() {
                     }
 
                     override fun success(result: GroupsGetObjectExtendedResponse) {
-                        continuation.resume(result)
-                    }
-                })
-        }
-    }
-
-    private suspend fun fetchVideo(videoGetRequest: VKRequest<VideoGetResponse>): VideoGetResponse {
-        return suspendCoroutine { continuation ->
-            VK.execute(request = videoGetRequest,
-                object : VKApiCallback<VideoGetResponse> {
-                    override fun fail(error: Exception) {
-                        continuation.resumeWithException(error)
-                    }
-
-                    override fun success(result: VideoGetResponse) {
                         continuation.resume(result)
                     }
                 })
