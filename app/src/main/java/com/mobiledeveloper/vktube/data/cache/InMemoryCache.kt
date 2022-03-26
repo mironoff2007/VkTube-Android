@@ -2,7 +2,7 @@ package com.mobiledeveloper.vktube.data.cache
 
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
 import com.mobiledeveloper.vktube.ui.screens.comments.CommentCellModel
-import com.mobiledeveloper.vktube.ui.screens.video.VideoDB
+import com.mobiledeveloper.vktube.data.video.VideoDB
 
 object InMemoryCache {
 

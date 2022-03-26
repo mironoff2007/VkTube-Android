@@ -1,7 +1,6 @@
 package com.mobiledeveloper.vktube.data.video
 
 import androidx.room.*
-import com.mobiledeveloper.vktube.ui.screens.video.VideoDB
 import kotlinx.coroutines.flow.Flow
 
 @Dao

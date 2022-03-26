@@ -1,8 +1,10 @@
 package com.mobiledeveloper.vktube.ui.screens.feed
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +33,9 @@ fun FeedScreen(
         viewState = viewState,
         onVideoClick = {
             feedViewModel.obtainEvent(FeedEvent.VideoClicked(it))
-        }
+        },
+        onScrollEnd = {feedViewModel.obtainEvent(FeedEvent.ScrollEnd)}
+
     )
 
     LaunchedEffect(key1 = viewAction, block = {
@@ -50,8 +54,16 @@ fun FeedScreen(
 }
 
 @Composable
-private fun FeedView(viewState: FeedState, onVideoClick: (VideoCellModel) -> Unit) {
+private fun FeedView(viewState: FeedState, onVideoClick: (VideoCellModel) -> Unit, onScrollEnd: () -> Unit) {
     LazyColumn {
+
+        itemsIndexed(viewState.items) { i, item  ->
+            if (viewState.items.size-1 == i) {
+                Log.e("Test_tag", "end of list reached $i")
+                onScrollEnd.invoke()
+            }
+        }
+
         if (viewState.items.isEmpty()) {
             repeat(10) {
                 item {

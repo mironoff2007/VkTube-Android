@@ -4,13 +4,12 @@ import android.util.Log
 import com.mobiledeveloper.vktube.data.cache.InMemoryCache
 import com.mobiledeveloper.vktube.data.clubs.ClubsRepository
 import com.mobiledeveloper.vktube.data.video.VideosRepository
-import com.mobiledeveloper.vktube.ui.screens.video.VideoDB
+import com.mobiledeveloper.vktube.data.video.VideoDB
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -42,7 +41,7 @@ class VideoRepositoryTest {
             val clubs = clubsRepository.fetchClubs(userId)
 
             val videos1 = videoRepository.fetchVideos(clubs = clubs, count = 4, frame = 0)
-            printId(videos1,4, 0)
+            Log.d("Test_tag",getFrameEndId(InMemoryCache.loadedVideos,4, 0).toString())
             InMemoryCache.loadedVideos.addAll(videos1)
 
             val videos2 = videoRepository.fetchVideos(clubs = clubs, count = 4, frame = 1)
@@ -50,7 +49,7 @@ class VideoRepositoryTest {
 
             InMemoryCache.loadedVideos.sortedBy { it.addingDate }.reversed()
 
-            printId(InMemoryCache.loadedVideos,4, 1)
+            Log.d("Test_tag",getFrameEndId(InMemoryCache.loadedVideos,4, 1).toString())
 
             size = InMemoryCache.loadedVideos.size
         }
@@ -64,14 +63,14 @@ class VideoRepositoryTest {
         return list
     }
 
-    fun printId(list:List<VideoDB>, count:Int, frame:Int){
+    fun getFrameEndId(list:List<VideoDB>, count:Int, frame:Int): Int{
         var i = 0
         list.forEach {
             if (it.position == count*(frame+1) - 1) {
-                Log.d("Test_tag", "ind=$i")
-                return
+                return i
             }
             i++
         }
+        return 0
     }
 }

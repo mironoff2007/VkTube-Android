@@ -5,5 +5,6 @@ import com.mobiledeveloper.vktube.ui.common.cell.VideoCellModel
 sealed class FeedEvent {
     object ScreenShown : FeedEvent()
     object ClearAction : FeedEvent()
+    object ScrollEnd : FeedEvent()
     data class VideoClicked(val videoCellModel: VideoCellModel) : FeedEvent()
 }

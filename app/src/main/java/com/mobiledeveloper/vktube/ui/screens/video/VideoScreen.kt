@@ -124,6 +124,7 @@ fun VideoScreenView(
     val video = viewState.video ?: return
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+
         stickyHeader {
             VideoPlayerView(
                 video = video,

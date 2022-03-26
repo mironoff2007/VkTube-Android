@@ -1,5 +1,6 @@
 package com.mobiledeveloper.vktube.ui.screens.feed
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mobiledeveloper.vktube.base.BaseViewModel
 import com.mobiledeveloper.vktube.data.cache.InMemoryCache
@@ -25,6 +26,7 @@ class FeedViewModel @Inject constructor(
     override fun obtainEvent(viewEvent: FeedEvent) {
         when (viewEvent) {
             FeedEvent.ScreenShown -> fetchVideos()
+            FeedEvent.ScrollEnd -> fetchVideos()
             FeedEvent.ClearAction -> clearAction()
             is FeedEvent.VideoClicked -> obtainVideoClick(viewEvent.videoCellModel)
         }
@@ -43,6 +45,8 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    var frame = -1
+
     private fun fetchVideos() {
         viewModelScope.launch(Dispatchers.IO) {
             val userId = try {
@@ -52,16 +56,16 @@ class FeedViewModel @Inject constructor(
                 userRepository.fetchLocalUser().userId
             }
 
+            Log.e("Test_tag", "Loading videos")
+
             val clubs = clubsRepository.fetchClubs(userId)
             //val videos = clubsRepository.fetchVideos(clubs = clubs, count = 20)
 
-            val videos1 = videosRepository.fetchVideos(clubs = clubs, count = 4, frame = 0)
-            InMemoryCache.loadedVideos.addAll(videos1)
+            frame++
+            val videos =  videosRepository.getFrame(frame = frame, count = 2, clubs = clubs)
 
-            val videos2 = videosRepository.fetchVideos(clubs = clubs, count = 4, frame = 1)
-            InMemoryCache.loadedVideos.addAll(videos2)
+            Log.e("Test_tag", "videos size ${videos.size}")
 
-            val videos =  InMemoryCache.loadedVideos.sortedBy { it.addingDate }.reversed()
             viewState = viewState.copy(
                 items = videos.mapNotNull { model ->
                     VideoCellModel(

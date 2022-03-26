@@ -1,6 +1,7 @@
 package com.mobiledeveloper.vktube.data.video
 
-import com.mobiledeveloper.vktube.ui.screens.video.VideoDB
+import android.util.Log
+import com.mobiledeveloper.vktube.data.cache.InMemoryCache
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKApiCallback
 import com.vk.api.sdk.requests.VKRequest
@@ -9,6 +10,7 @@ import com.vk.dto.common.id.unaryMinus
 import com.vk.sdk.api.groups.dto.GroupsGetObjectExtendedResponse
 import com.vk.sdk.api.video.VideoService
 import com.vk.sdk.api.video.dto.VideoGetResponse
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -18,6 +20,14 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
 
    fun saveToDB(videos: List<VideoDB>){
       videosDao.videosDao().insertAllVideoData(videos)
+   }
+
+   suspend fun getFrame(clubs: GroupsGetObjectExtendedResponse, count: Int, frame:Int): List<VideoDB> {
+      InMemoryCache.loadedVideos.addAll(fetchVideos(clubs, count, frame))
+      InMemoryCache.loadedVideos.sortWith(Comparator { video1, video2 -> video2.addingDate - video1.addingDate })
+      val id = getFrameEndId(InMemoryCache.loadedVideos,count, frame )
+      Log.e("Test_tag", "frame ends at $id")
+      return InMemoryCache.loadedVideos.subList(0,id+1)
    }
 
    suspend fun fetchVideos(clubs: GroupsGetObjectExtendedResponse, count: Int, frame:Int): List<VideoDB> {
@@ -76,5 +86,16 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
                }
             })
       }
+   }
+
+   fun getFrameEndId(list:List<VideoDB>, count:Int, frame:Int): Int{
+      var i = 0
+      list.forEach {
+         if (it.position == count*(frame+1) - 1) {
+            return i
+         }
+         i++
+      }
+      return 0
    }
 }

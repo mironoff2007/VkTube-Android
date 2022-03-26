@@ -1,4 +1,4 @@
-package com.mobiledeveloper.vktube.ui.screens.video
+package com.mobiledeveloper.vktube.data.video
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -23,5 +23,4 @@ data class VideoDB(
 {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-
 }
