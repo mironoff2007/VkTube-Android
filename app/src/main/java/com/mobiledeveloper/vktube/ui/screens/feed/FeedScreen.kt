@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -37,17 +34,15 @@ fun FeedScreen(
             feedViewModel.obtainEvent(FeedEvent.VideoClicked(it))
         },
         onScrollEnd = {feedViewModel.obtainEvent(FeedEvent.ScrollEnd)}
-
     )
 
     LaunchedEffect(key1 = viewAction, block = {
         when (viewAction) {
             is FeedAction.OpenVideoDetail -> {
                 navController.navigate("${NavigationTree.Root.Detail.name}/${(viewAction as FeedAction.OpenVideoDetail).videoId}")
+                feedViewModel.obtainEvent(FeedEvent.ClearAction)
             }
         }
-
-        feedViewModel.obtainEvent(FeedEvent.ClearAction)
     })
 
     LaunchedEffect(key1 = Unit, block = {
