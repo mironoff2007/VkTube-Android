@@ -4,6 +4,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -53,6 +54,10 @@ val items = listOf(
     BottomNavigationItem(
         route = NavigationTree.Root.Main.name,
         icon = Icons.Default.List
+    ),
+    BottomNavigationItem(
+        route = NavigationTree.Root.History.name,
+        icon = Icons.Default.DateRange
     ),
     BottomNavigationItem(
         route = NavigationTree.Root.Settings.name,

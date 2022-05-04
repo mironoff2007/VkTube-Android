@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.mobiledeveloper.vktube.ui.common.LocalSnackbarHostState
 import com.mobiledeveloper.vktube.ui.screens.feed.FeedScreen
 import com.mobiledeveloper.vktube.ui.screens.feed.FeedViewModel
+import com.mobiledeveloper.vktube.ui.screens.history.HistoryViewModel
 import com.mobiledeveloper.vktube.ui.screens.login.LoginScreen
 import com.mobiledeveloper.vktube.ui.screens.login.LoginViewModel
 import com.mobiledeveloper.vktube.ui.screens.settings.SettingsScreen
@@ -54,6 +55,10 @@ fun NavigationGraph() {
                 composable(NavigationTree.Root.Main.name) {
                     val feedViewModel = hiltViewModel<FeedViewModel>()
                     FeedScreen(navController, feedViewModel)
+                }
+                composable(NavigationTree.Root.History.name) {
+                    val historyViewModel = hiltViewModel<HistoryViewModel>()
+                    FeedScreen(navController, historyViewModel)
                 }
                 composable(NavigationTree.Root.SubscriptionsList.name) {
                     val blackListViewModel = hiltViewModel<SubscriptionsListViewModel>()

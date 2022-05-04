@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.insets.systemBarsPadding
+import com.mobiledeveloper.vktube.base.BaseViewModel
 import com.mobiledeveloper.vktube.navigation.NavigationTree
 import com.mobiledeveloper.vktube.ui.common.LocalSnackbarHostState
 import com.mobiledeveloper.vktube.ui.common.cell.Size
@@ -30,7 +31,7 @@ import com.mobiledeveloper.vktube.ui.theme.Fronton
 @Composable
 fun FeedScreen(
     navController: NavController,
-    feedViewModel: FeedViewModel
+    feedViewModel: BaseViewModel<FeedState, FeedAction, FeedEvent>
 ) {
     val viewState by feedViewModel.viewStates().collectAsState()
     val viewAction by feedViewModel.viewActions().collectAsState(initial = null)
