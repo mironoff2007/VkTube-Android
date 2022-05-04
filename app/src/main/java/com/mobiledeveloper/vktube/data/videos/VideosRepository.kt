@@ -193,9 +193,12 @@ class VideosRepository @Inject constructor(val videoLocalDataSource: VideosLocal
         videoLocalDataSource.saveVideos(videos)
     }
 
-    fun loadVideos(video: VideoCellModel): List<VideoCellModel> {
+    fun loadVideos(): List<VideoCellModel> {
         return videoLocalDataSource.loadVideos()
     }
 
+    fun clearVideos() {
+        videoLocalDataSource.clearVideos()
+    }
     data class LoadSettings(val groupId: Long, val count: Int, val offset: Int = 0)
 }
