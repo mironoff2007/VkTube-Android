@@ -20,12 +20,13 @@ import com.vk.sdk.api.video.VideoService
 import com.vk.sdk.api.video.dto.VideoGetResponse
 import com.vk.sdk.api.video.dto.VideoVideoFull
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class VideosRepository @Inject constructor(val videoLocalDataSource: VideosLocalDataSource) {
+class VideosRepository @Inject constructor(private val videosDao : VideosDatabase) {
     suspend fun fetchVideos(
         groupIds: List<Long>,
         count: Int
@@ -181,24 +182,26 @@ class VideosRepository @Inject constructor(val videoLocalDataSource: VideosLocal
             }
         }
 
-
         companion object {
             private const val CHUNK_LIMIT = 25
         }
     }
 
-    fun saveVideo(video: VideoCellModel){
-        val videos = videoLocalDataSource.loadVideos() as MutableList
-        videos.add(video)
-        videoLocalDataSource.saveVideos(videos)
+    fun saveVideo(videoCellModel: VideoCellModel){
+        videosDao.videosDao().addVideo(VideoHistory.fromVideoCellModel(videoCellModel))
     }
 
     fun loadVideos(): List<VideoCellModel> {
-        return videoLocalDataSource.loadVideos()
+        return listOf()
+    }
+
+    fun getVideo(id: Int): Flow<VideoHistory> {
+        return videosDao.videosDao().getVideoById(id)
     }
 
     fun clearVideos() {
-        videoLocalDataSource.clearVideos()
+        videosDao.videosDao().resetTable()
     }
+
     data class LoadSettings(val groupId: Long, val count: Int, val offset: Int = 0)
 }
