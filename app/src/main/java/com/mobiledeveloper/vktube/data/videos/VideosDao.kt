@@ -10,7 +10,7 @@ interface VideosDao {
     fun addVideo(videoHistory: VideoHistory)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllVideo(list: List<VideoHistory>)
+    fun insertVideos(list: List<VideoHistory>)
 
     @Update
     fun updateVideo(videoHistory: VideoHistory)
@@ -23,5 +23,8 @@ interface VideosDao {
 
     @Query("SELECT * FROM VideoHistory Where VideoHistory.videoId Like :id")
     fun getVideoById(id: Int): Flow<VideoHistory>
+
+    @Query("SELECT * FROM VideoHistory")
+    fun getVideos(): Flow<List<VideoHistory>>
 
 }

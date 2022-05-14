@@ -191,12 +191,20 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
         videosDao.videosDao().addVideo(VideoHistory.fromVideoCellModel(videoCellModel))
     }
 
+    fun saveVideos(videoCellModel: List<VideoCellModel>){
+        videosDao.videosDao().insertVideos(videoCellModel.map { VideoHistory.fromVideoCellModel(it) })
+    }
+
     fun loadVideos(): List<VideoCellModel> {
         return listOf()
     }
 
     fun getVideo(id: Int): Flow<VideoHistory> {
         return videosDao.videosDao().getVideoById(id)
+    }
+
+    fun getAllVideos(): Flow<List<VideoHistory>> {
+        return videosDao.videosDao().getVideos()
     }
 
     fun clearVideos() {
