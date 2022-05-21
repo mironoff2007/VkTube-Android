@@ -1,11 +1,13 @@
 package com.mobiledeveloper.vktube
 
+import android.content.Context
+import androidx.test.platform.app.InstrumentationRegistry
 import com.mobiledeveloper.vktube.data.videos.VideosRepository
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellGroupInfo
 import com.mobiledeveloper.vktube.ui.screens.feed.models.VideoCellModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -16,12 +18,20 @@ import javax.inject.Inject
 @HiltAndroidTest
 class VideoHistoryRepositoryTest {
 
+    lateinit var instrumentationContext: Context
+
+    @Before
+    fun setup() {
+
+    }
+
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
 
     @Before
     fun before() {
         hiltRule.inject()
+        instrumentationContext = InstrumentationRegistry.getInstrumentation().context
     }
 
     @After
@@ -33,7 +43,7 @@ class VideoHistoryRepositoryTest {
     lateinit var repo: VideosRepository
 
     @Test
-    fun test1() {
+    fun testSaveAndLoadVideo() {
         repo.clearVideos()
 
         val video = VideoCellModel(
@@ -64,7 +74,7 @@ class VideoHistoryRepositoryTest {
     }
 
     @Test
-    fun test2() {
+    fun testLoadAllVideos() {
         repo.clearVideos()
 
         val video1 = VideoCellModel(
@@ -110,7 +120,7 @@ class VideoHistoryRepositoryTest {
         val videoLoaded: List<VideoCellModel>
 
         runBlocking {
-            videoLoaded = repo.getAllVideos().first().map { it.toVideoCellModel() }
+            videoLoaded = repo.getAllVideos().toList().map { it.toVideoCellModel() }
         }
 
         assert(videoLoaded.size == 2)

@@ -20,13 +20,18 @@ import com.vk.sdk.api.video.VideoService
 import com.vk.sdk.api.video.dto.VideoGetResponse
 import com.vk.sdk.api.video.dto.VideoVideoFull
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 class VideosRepository @Inject constructor(private val videosDao : VideosDatabase) {
+
+    val videosHistoryList = MutableSharedFlow<List<VideoHistory>>()
+
+    //val reviewedVideo = MutableStateFlow<VideoHistory>()
+
     suspend fun fetchVideos(
         groupIds: List<Long>,
         count: Int
@@ -195,16 +200,12 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
         videosDao.videosDao().insertVideos(videoCellModel.map { VideoHistory.fromVideoCellModel(it) })
     }
 
-    fun loadVideos(): List<VideoCellModel> {
-        return listOf()
-    }
-
     fun getVideo(id: Int): Flow<VideoHistory> {
-        return videosDao.videosDao().getVideoById(id)
+        return flow { emit(videosDao.videosDao().getVideoById(id)) }
     }
 
-    fun getAllVideos(): Flow<List<VideoHistory>> {
-        return videosDao.videosDao().getVideos()
+    fun getAllVideos(): Flow<VideoHistory> {
+        return videosDao.videosDao().getAllVideos().asFlow()
     }
 
     fun clearVideos() {

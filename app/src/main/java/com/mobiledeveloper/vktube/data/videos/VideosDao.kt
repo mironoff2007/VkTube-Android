@@ -22,9 +22,9 @@ interface VideosDao {
     fun resetTable( )
 
     @Query("SELECT * FROM VideoHistory Where VideoHistory.videoId Like :id")
-    fun getVideoById(id: Int): Flow<VideoHistory>
+    fun getVideoById(id: Int): VideoHistory
 
     @Query("SELECT * FROM VideoHistory")
-    fun getVideos(): Flow<List<VideoHistory>>
+    fun getAllVideos(): List<VideoHistory>
 
 }
