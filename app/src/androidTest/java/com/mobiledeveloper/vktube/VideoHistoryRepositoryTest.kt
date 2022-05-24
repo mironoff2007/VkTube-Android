@@ -1,14 +1,20 @@
 package com.mobiledeveloper.vktube
 
 import android.content.Context
+import android.util.Log
+import androidx.test.core.app.ActivityScenario.launch
 import androidx.test.platform.app.InstrumentationRegistry
 import com.mobiledeveloper.vktube.data.videos.VideosRepository
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellGroupInfo
 import com.mobiledeveloper.vktube.ui.screens.feed.models.VideoCellModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -17,6 +23,8 @@ import javax.inject.Inject
 
 @HiltAndroidTest
 class VideoHistoryRepositoryTest {
+
+    val TEST_TAG = "Test_tag"
 
     lateinit var instrumentationContext: Context
 
@@ -43,7 +51,8 @@ class VideoHistoryRepositoryTest {
     lateinit var repo: VideosRepository
 
     @Test
-    fun testSaveAndLoadVideo() {
+    fun testSaveAndLoadVideo() = runBlocking{
+        Log.d(TEST_TAG, "testSaveAndLoadVideo")
         repo.clearVideos()
 
         val video = VideoCellModel(
@@ -67,14 +76,23 @@ class VideoHistoryRepositoryTest {
 
         repo.saveVideo(video)
 
-        val videoLoaded: VideoCellModel
-        runBlocking { videoLoaded = repo.getVideo(1).first().toVideoCellModel() }
+        var videoLoaded: VideoCellModel? = null
+
+        launch {
+            videoLoaded = repo.reviewedVideos.first().first().toVideoCellModel()
+        }
+
+
+        while (videoLoaded == null) {
+            delay(100)
+            repo.getVideo(1)
+        }
 
         assert(videoLoaded == video)
     }
 
     @Test
-    fun testLoadAllVideos() {
+    fun testLoadAllVideos() = runBlocking{
         repo.clearVideos()
 
         val video1 = VideoCellModel(
@@ -117,13 +135,18 @@ class VideoHistoryRepositoryTest {
 
         repo.saveVideos(listOf(video1,video2))
 
-        val videoLoaded: List<VideoCellModel>
+        var videoLoaded: List<VideoCellModel>? = null
 
-        runBlocking {
-            videoLoaded = repo.getAllVideos().toList().map { it.toVideoCellModel() }
+        launch {
+            videoLoaded = repo.reviewedVideos.first().map { it.toVideoCellModel() }
         }
 
-        assert(videoLoaded.size == 2)
+        while (videoLoaded == null) {
+            delay(100)
+            repo.getAllVideos()
+        }
+
+        assert(videoLoaded?.size == 2)
     }
 
 }

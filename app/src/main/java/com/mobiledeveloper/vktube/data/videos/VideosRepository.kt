@@ -28,9 +28,7 @@ import kotlin.math.absoluteValue
 
 class VideosRepository @Inject constructor(private val videosDao : VideosDatabase) {
 
-    val videosHistoryList = MutableSharedFlow<List<VideoHistory>>()
-
-    //val reviewedVideo = MutableStateFlow<VideoHistory>()
+    val reviewedVideos = MutableSharedFlow<List<VideoHistory>>()
 
     suspend fun fetchVideos(
         groupIds: List<Long>,
@@ -200,12 +198,12 @@ class VideosRepository @Inject constructor(private val videosDao : VideosDatabas
         videosDao.videosDao().insertVideos(videoCellModel.map { VideoHistory.fromVideoCellModel(it) })
     }
 
-    fun getVideo(id: Int): Flow<VideoHistory> {
-        return flow { emit(videosDao.videosDao().getVideoById(id)) }
+    suspend fun getVideo(id: Int) {
+        reviewedVideos.emit(listOf(videosDao.videosDao().getVideoById(id)))
     }
 
-    fun getAllVideos(): Flow<VideoHistory> {
-        return videosDao.videosDao().getAllVideos().asFlow()
+    suspend fun getAllVideos() {
+        return reviewedVideos.emit(videosDao.videosDao().getAllVideos())
     }
 
     fun clearVideos() {
