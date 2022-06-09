@@ -2,7 +2,6 @@ package com.mobiledeveloper.vktube
 
 import android.content.Context
 import android.util.Log
-import androidx.test.core.app.ActivityScenario.launch
 import androidx.test.platform.app.InstrumentationRegistry
 import com.mobiledeveloper.vktube.data.videos.VideosRepository
 import com.mobiledeveloper.vktube.ui.common.cell.VideoCellGroupInfo
@@ -13,8 +12,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
